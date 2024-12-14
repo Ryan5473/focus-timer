@@ -1,33 +1,102 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Pomodoro Task Manager
+
+A modern, feature-rich Pomodoro timer application with an integrated Kanban task board. Built with Next.js, TypeScript, and Tailwind CSS.
+
+![Pomodoro Task Manager](https://productivity.cleverdeveloper.in/og.png)
+
+## Features
+
+- **Pomodoro Timer**
+
+  - Customizable focus and break durations
+  - Visual progress indicator
+  - Auto-start option for sessions
+  - Mini-widget for tracking time while scrolling
+  - Support for both short and long breaks
+
+- **Kanban Board**
+
+  - Drag-and-drop task management
+  - Three status columns: Not Started, In Progress, and Done
+  - Persistent storage using localStorage
+  - Smooth animations and transitions
+  - Quick task addition and removal
+
+- **User Interface**
+  - Dark mode by default with system theme support
+  - Responsive design for all screen sizes
+  - Clean, modern UI with blur effects
+  - Geist font family integration
+  - Framer Motion animations
+
+## Tech Stack
+
+- **Framework**: Next.js 14
+- **Language**: TypeScript
+- **Styling**: Tailwind CSS
+- **UI Components**: shadcn/ui
+- **Animations**: Framer Motion
+- **Icons**: Lucide Icons
+- **Fonts**: Geist Sans & Geist Mono
 
 ## Getting Started
 
-First, run the development server:
+1. Clone the repository:
 
 ```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+git clone https://github.com/C-W-D-Harshit/time-focus.git
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. Install dependencies:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```bash
+pnpm install
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+3. Run the development server:
+
+```bash
+pnpm dev
+```
+
+4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+
+## Project Structure
+
+```
+src/
+├── app/
+│   ├── layout.tsx    # Root layout with theme provider
+│   └── page.tsx      # Main application page
+├── components/
+│   ├── KanbanBoard.tsx       # Kanban board implementation
+│   ├── PomodoroTimer.tsx     # Timer component
+│   ├── SettingsModal.tsx     # Timer settings
+│   └── PomodoroMiniWidget.tsx # Floating mini timer
+├── contexts/
+│   └── TimerContext.tsx      # Timer state management
+└── lib/
+    └── utils.ts              # Utility functions
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## Learn More
 
-To learn more about Next.js, take a look at the following resources:
-
 - [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
 - [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+- [shadcn/ui Documentation](https://ui.shadcn.com/) - learn about the UI components used.
+- [Framer Motion](https://www.framer.com/motion/) - for animation capabilities.
 
 ## Deploy on Vercel
 
