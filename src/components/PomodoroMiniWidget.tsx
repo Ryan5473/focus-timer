@@ -32,7 +32,7 @@ export function PomodoroMiniWidget({
       initial={{ opacity: 0, y: 50 }}
       animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? 0 : 50 }}
       transition={{ duration: 0.3 }}
-      className="fixed bottom-4 right-4 bg-gray-800 bg-opacity-30 border-gray-700 backdrop-filter backdrop-blur-lg rounded-full shadow-lg border cursor-pointer"
+      className="fixed bottom-4 right-4 bg-gray-800 bg-opacity-30 border-gray-700 backdrop-filter backdrop-blur-lg rounded-full shadow-lg border cursor-pointer z-50"
       onClick={onClick}
     >
       <div className="relative w-16 h-16">
