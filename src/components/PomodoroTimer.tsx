@@ -285,7 +285,7 @@ export default function PomodoroTimer() {
             {showDevTools ? "Hide Dev Tools" : "Show Dev Tools"}
           </Button>
 
-          {showDevTools && (
+          {process.env.NODE_ENV !== "production" && showDevTools && (
             <DevTools
               onSpeedChange={handleSpeedChange}
               onModeChange={handleModeChange}
