@@ -19,11 +19,11 @@ export const metadata: Metadata = {
   openGraph: {
     title: "Pomodoro Task Manager",
     description: "A simple Pomodoro task manager",
-    url: "https://pomodoro-task-manager.vercel.app",
+    url: "https://productivity.cleverdeveloper.in",
     siteName: "Pomodoro Task Manager",
     images: [
       {
-        url: "https://pomodoro-task-manager.vercel.app/og.png",
+        url: "https://productivity.cleverdeveloper.in/og.png",
       },
     ],
   },
