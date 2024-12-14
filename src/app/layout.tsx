@@ -16,6 +16,20 @@ const geistMono = Geist_Mono({
 export const metadata: Metadata = {
   title: "Pomodoro Task Manager",
   description: "A simple Pomodoro task manager",
+  openGraph: {
+    title: "Pomodoro Task Manager",
+    description: "A simple Pomodoro task manager",
+    url: "https://pomodoro-task-manager.vercel.app",
+    siteName: "Pomodoro Task Manager",
+    images: [
+      {
+        url: "https://pomodoro-task-manager.vercel.app/og.png",
+      },
+    ],
+  },
+  icons: {
+    icon: "/logo.svg",
+  },
 };
 
 export default function RootLayout({
