@@ -277,13 +277,15 @@ export default function PomodoroTimer() {
           </div>
 
           {/* Dev Tools Toggle */}
-          <Button
-            variant="link"
-            onClick={() => setShowDevTools(!showDevTools)}
-            className="mt-4 text-gray-400 hover:text-gray-200"
-          >
-            {showDevTools ? "Hide Dev Tools" : "Show Dev Tools"}
-          </Button>
+          {process.env.NODE_ENV !== "production" && (
+            <Button
+              variant="link"
+              onClick={() => setShowDevTools(!showDevTools)}
+              className="mt-4 text-gray-400 hover:text-gray-200"
+            >
+              {showDevTools ? "Hide Dev Tools" : "Show Dev Tools"}
+            </Button>
+          )}
 
           {process.env.NODE_ENV !== "production" && showDevTools && (
             <DevTools
