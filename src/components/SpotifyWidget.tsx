@@ -87,25 +87,26 @@ const defaultPlaylists: Playlist[] = [
 
 const foundersPicks: Playlist[] = [
   {
-    id: "37i9dQZF1DX5KpP2LN299J",
-    name: "Lo-Fi Beats",
-    description: "Beats to relax, study, and focus.",
+    id: "6ZWWbwLnpN1yppD9mpn6sZ",
+    name: "Lofi programing",
+    description: "Best lofi for programers!!!",
     imageUrl:
-      "https://i.scdn.co/image/ab67706f00000002ca5a7517156021292e5663a6",
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c121e705ed7aa76c97e9aa326",
   },
   {
-    id: "37i9dQZF1DX8NTLI2TtZa6",
-    name: "Coding Mode",
-    description: "Dedicated to all the programmers out there.",
+    id: "1d2VcwJ1UQc3s46KqLrCQP",
+    name: "Work Music 2024",
+    description:
+      "Working &amp; Chill - Office Hits - Clean For Work Playlist music for Work Music Focus Music for working from home work playlist 2024 clean work songs working and chill Office Music 2024 Office Playlist 2024 workplace jams",
     imageUrl:
-      "https://i.scdn.co/image/ab67706f000000025551996f500ba876bda73fa5",
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84ec720320eefdd98ec54c6e30",
   },
   {
-    id: "37i9dQZF1DWZeKCadgRdKQ",
-    name: "Deep Focus",
-    description: "Keep calm and focus with ambient and post-rock music.",
+    id: "1Vi7vReqfgQRoLrEsnR0KO",
+    name: "Coders' Playlist",
+    description: "Tune in with GeeksforGeeks.",
     imageUrl:
-      "https://i.scdn.co/image/ab67706f00000002d6d48b11fd3b11da654c3519",
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000d72c00c781ab4573a49f699a7e91",
   },
 ];
 
