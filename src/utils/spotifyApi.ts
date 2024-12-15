@@ -49,6 +49,7 @@ export const fetchPlaylistDetails = async (
       }
     );
 
+    console.log(response);
     // If response is not ok, return dummy details instead of throwing an error
     if (!response.ok) {
       console.warn(`Failed to fetch playlist details: ${response.statusText}`);
