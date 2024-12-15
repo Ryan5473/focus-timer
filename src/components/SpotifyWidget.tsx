@@ -3,7 +3,7 @@
 import { useState, useEffect } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { Music2, XCircle, Star } from "lucide-react";
+import { Music2, XCircle, Star, LogIn, LogOut } from "lucide-react";
 import { PlaylistCard } from "./PlaylistCard";
 import { toast, Toaster } from "sonner";
 import {
@@ -12,6 +12,11 @@ import {
   TooltipProvider,
   TooltipTrigger,
 } from "@/components/ui/tooltip";
+import {
+  getAuthUrl,
+  getAccessToken,
+  fetchPlaylistDetails,
+} from "@/utils/spotifyApi";
 
 interface Playlist {
   id: string;
@@ -109,81 +114,111 @@ export function SpotifyWidget() {
   const [embedUrl, setEmbedUrl] = useState("");
   const [savedPlaylists, setSavedPlaylists] = useState<Playlist[]>([]);
   const [currentPlaylist, setCurrentPlaylist] = useState<Playlist | null>(null);
-  const [toastShown, setToastShown] = useState(false);
+  const [accessToken, setAccessToken] = useState<string | null>(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    const token = getAccessToken();
+    if (token) {
+      setAccessToken(token);
+    }
+
     const saved = localStorage.getItem("savedPlaylists");
     if (saved) {
       setSavedPlaylists(JSON.parse(saved));
     }
   }, []);
 
-  const showSignInToast = () => {
-    if (!toastShown) {
-      toast(
-        <div>
-          Sign in to Spotify for full functionality.
-          <a
-            href="https://accounts.spotify.com/login"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="block mt-2 text-green-400 hover:text-green-300 underline"
-          >
-            Sign in to Spotify
-          </a>
-        </div>,
-        {
-          duration: 5000,
-        }
+  const handleAuth = () => {
+    window.location.href = getAuthUrl();
+  };
+
+  const handleSignOut = () => {
+    localStorage.removeItem("spotifyAccessToken");
+    setAccessToken(null);
+    toast.success("Signed out of Spotify successfully");
+  };
+
+  const savePlaylist = async (playlist: Playlist) => {
+    if (!accessToken) {
+      toast.error("Please sign in to Spotify to save playlists.");
+      return;
+    }
+
+    setIsLoading(true);
+    try {
+      const playlistDetails = await fetchPlaylistDetails(
+        playlist.id,
+        accessToken
       );
-      setToastShown(true);
+      const updatedPlaylists = [...savedPlaylists, playlistDetails];
+      setSavedPlaylists(updatedPlaylists);
+      localStorage.setItem("savedPlaylists", JSON.stringify(updatedPlaylists));
+      toast.success("Playlist saved successfully!");
+    } catch (error) {
+      console.error("Error saving playlist:", error);
+      toast.error("Failed to save playlist. Please try again.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  const savePlaylist = (playlist: Playlist) => {
-    showSignInToast();
-    const updatedPlaylists = [...savedPlaylists, playlist];
-    setSavedPlaylists(updatedPlaylists);
-    localStorage.setItem("savedPlaylists", JSON.stringify(updatedPlaylists));
-  };
-
   const removePlaylist = (id: string) => {
-    showSignInToast();
     const updatedPlaylists = savedPlaylists.filter(
       (playlist) => playlist.id !== id
     );
     setSavedPlaylists(updatedPlaylists);
     localStorage.setItem("savedPlaylists", JSON.stringify(updatedPlaylists));
+    toast.success("Playlist removed from library.");
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    showSignInToast();
     if (playlistUrl) {
       const playlistId = playlistUrl.split("/playlist/")[1]?.split("?")[0];
       if (playlistId) {
-        const newPlaylist: Playlist = {
-          id: playlistId,
-          name: "Custom Playlist",
-          description: "Your custom playlist",
-          imageUrl: "https://via.placeholder.com/300",
-        };
-        setCurrentPlaylist(newPlaylist);
-        setEmbedUrl(
-          `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=oembed`
-        );
+        setIsLoading(true);
+        try {
+          setEmbedUrl(
+            `https://open.spotify.com/embed/playlist/${playlistId}?utm_source=oembed`
+          );
+          if (accessToken) {
+            const playlistDetails = await fetchPlaylistDetails(
+              playlistId,
+              accessToken
+            );
+            setCurrentPlaylist(playlistDetails);
+          }
+        } catch (error) {
+          console.error("Error fetching playlist:", error);
+        } finally {
+          setIsLoading(false);
+        }
       } else {
         toast.error("Invalid Spotify playlist URL. Please try again.");
       }
     }
   };
 
-  const handleSelectPlaylist = (playlist: Playlist) => {
-    showSignInToast();
-    setCurrentPlaylist(playlist);
-    setEmbedUrl(
-      `https://open.spotify.com/embed/playlist/${playlist.id}?utm_source=oembed`
-    );
+  const handleSelectPlaylist = async (playlist: Playlist) => {
+    setIsLoading(true);
+    try {
+      setEmbedUrl(
+        `https://open.spotify.com/embed/playlist/${playlist.id}?utm_source=oembed`
+      );
+      setCurrentPlaylist(playlist);
+      if (accessToken) {
+        const playlistDetails = await fetchPlaylistDetails(
+          playlist.id,
+          accessToken
+        );
+        setCurrentPlaylist(playlistDetails);
+      }
+    } catch (error) {
+      console.error("Error fetching playlist:", error);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -198,11 +233,44 @@ export function SpotifyWidget() {
           },
         }}
       />
-      <h2 className="text-2xl font-semibold text-gray-100 mb-4 flex items-center">
-        <Music2 className="w-6 h-6 mr-2 text-green-400" />
-        Spotify Playlists
+      <h2 className="text-2xl font-semibold text-gray-100 mb-4 flex items-center justify-between">
+        <span className="flex items-center">
+          <Music2 className="w-6 h-6 mr-2 text-green-400" />
+          Spotify Playlists
+        </span>
+        <TooltipProvider delayDuration={200}>
+          <Tooltip>
+            <TooltipTrigger asChild>
+              {accessToken ? (
+                <Button
+                  onClick={handleSignOut}
+                  className="bg-red-600 hover:bg-red-700 text-white p-2 rounded-full"
+                >
+                  <LogOut className="w-4 h-4" />
+                </Button>
+              ) : (
+                <Button
+                  onClick={handleAuth}
+                  className="bg-green-600 hover:bg-green-700 text-white p-2 rounded-full"
+                >
+                  Sign in to Spotify
+                  <LogIn className="w-4 h-4" />
+                </Button>
+              )}
+            </TooltipTrigger>
+            <TooltipContent>
+              <p>
+                {accessToken ? "Sign out of Spotify" : "Sign in to Spotify"}
+              </p>
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       </h2>
-      {!embedUrl ? (
+      {isLoading ? (
+        <div className="flex items-center justify-center flex-grow">
+          <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
+        </div>
+      ) : !embedUrl ? (
         <>
           <div className="mb-4 overflow-y-auto flex-grow pr-2">
             <h3 className="text-lg font-semibold text-gray-200 mb-2 flex items-center">
@@ -220,23 +288,27 @@ export function SpotifyWidget() {
                 />
               ))}
             </div>
-            <h3 className="text-lg font-semibold text-gray-200 mb-2">
-              Your Playlists
-            </h3>
-            {savedPlaylists.length > 0 ? (
-              <div className="grid grid-cols-3 gap-3 mb-4">
-                {savedPlaylists.map((playlist) => (
-                  <PlaylistCard
-                    key={playlist.id}
-                    {...playlist}
-                    onSelect={() => handleSelectPlaylist(playlist)}
-                    onRemove={() => removePlaylist(playlist.id)}
-                    isSaved
-                  />
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-400 mb-4">No saved playlists yet.</p>
+            {accessToken && (
+              <>
+                <h3 className="text-lg font-semibold text-gray-200 mb-2">
+                  Your Playlists
+                </h3>
+                {savedPlaylists.length > 0 ? (
+                  <div className="grid grid-cols-3 gap-3 mb-4">
+                    {savedPlaylists.map((playlist) => (
+                      <PlaylistCard
+                        key={playlist.id}
+                        {...playlist}
+                        onSelect={() => handleSelectPlaylist(playlist)}
+                        onRemove={() => removePlaylist(playlist.id)}
+                        isSaved
+                      />
+                    ))}
+                  </div>
+                ) : (
+                  <p className="text-gray-400 mb-4">No saved playlists yet.</p>
+                )}
+              </>
             )}
             <h3 className="text-lg font-semibold text-gray-200 mb-2">
               Recommended Playlists
@@ -299,7 +371,8 @@ export function SpotifyWidget() {
                 </TooltipContent>
               </Tooltip>
             </TooltipProvider>
-            {currentPlaylist &&
+            {accessToken &&
+              currentPlaylist &&
               !savedPlaylists.some((p) => p.id === currentPlaylist.id) && (
                 <TooltipProvider delayDuration={200}>
                   <Tooltip>
