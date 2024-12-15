@@ -129,14 +129,15 @@ export default function PomodoroTimer() {
   const switchMode = useCallback(
     (newMode: TimerMode) => {
       setMode(newMode);
-      if (!isActive) {
+      // Only set initial time if we're starting fresh
+      if (time === 0) {
         setTime(settings[`${newMode}Time`] * 60);
       }
       if (autoStart) {
         setIsActive(true);
       }
     },
-    [settings, autoStart, isActive]
+    [settings, autoStart, time]
   );
 
   const nextMode = useCallback(() => {
@@ -144,7 +145,7 @@ export default function PomodoroTimer() {
       const breakMode =
         settings.breakType === "short" ? "shortBreak" : "longBreak";
       setMode(breakMode);
-      setTime(settings[`${breakMode}Time`] * 60);
+      setTime(settings[`${breakMode}Time`] * 60); // Set initial time for new mode
       if (breakMode === "longBreak") {
         setCycleCount(0);
       } else {
@@ -152,18 +153,19 @@ export default function PomodoroTimer() {
       }
     } else {
       setMode("focus");
-      setTime(settings.focusTime * 60);
+      setTime(settings.focusTime * 60); // Set initial time for new mode
     }
     if (autoStart) {
       setIsActive(true);
     }
   }, [mode, settings, autoStart]);
 
-  useEffect(() => {
-    if (!isActive) {
-      setTime(settings[`${mode}Time`] * 60);
-    }
-  }, [settings, mode, isActive]);
+  // Removed useEffect as per update request
+  // useEffect(() => {
+  //   if (!isActive) {
+  //     setTime(settings[`${mode}Time`] * 60);
+  //   }
+  // }, [settings, mode, isActive]);
 
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
