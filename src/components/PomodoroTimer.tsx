@@ -121,8 +121,10 @@ export default function PomodoroTimer() {
   const [showDevTools, setShowDevTools] = useState(false);
   const [autoStart, setAutoStart] = useState(true);
   const [showMiniWidget, setShowMiniWidget] = useState(false);
+  const [isMuted, setIsMuted] = useState(false);
 
   const timerRef = useRef<HTMLDivElement>(null);
+  const audioRef = useRef<HTMLAudioElement | null>(null);
 
   const progress = 1 - time / (settings[`${mode}Time`] * 60);
 
@@ -141,6 +143,14 @@ export default function PomodoroTimer() {
   );
 
   const nextMode = useCallback(() => {
+    // Play sound when timer completes
+    if (audioRef.current) {
+      audioRef.current.currentTime = 0; // Reset audio to start
+      audioRef.current.play().catch((error) => {
+        console.warn("Audio playback failed:", error);
+      });
+    }
+
     if (mode === "focus") {
       const breakMode =
         settings.breakType === "short" ? "shortBreak" : "longBreak";
@@ -235,6 +245,13 @@ export default function PomodoroTimer() {
   const containerClasses = "transform-gpu will-change-transform";
   const progressCircleClasses = "transform-gpu will-change-transform";
 
+  const toggleMute = () => {
+    setIsMuted((prev) => !prev);
+    if (audioRef.current) {
+      audioRef.current.muted = !isMuted;
+    }
+  };
+
   return (
     <>
       <div
@@ -313,6 +330,45 @@ export default function PomodoroTimer() {
             >
               <Settings2 className="w-4 h-4" />
             </Button>
+            <Button
+              variant="ghost"
+              size="icon"
+              onClick={toggleMute}
+              className="rounded-full bg-gray-700/50 hover:bg-gray-600/50 text-gray-200 w-10 h-10 p-0"
+            >
+              {isMuted ? (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <path d="M11 5L6 9H2v6h4l5 4V5z" />
+                  <line x1="23" y1="9" x2="17" y2="15" />
+                  <line x1="17" y1="9" x2="23" y2="15" />
+                </svg>
+              ) : (
+                <svg
+                  xmlns="http://www.w3.org/2000/svg"
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                >
+                  <polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5" />
+                  <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07" />
+                </svg>
+              )}
+            </Button>
           </div>
 
           {/* Auto-start toggle */}
@@ -357,6 +413,7 @@ export default function PomodoroTimer() {
         isVisible={showMiniWidget}
         onClick={scrollToTimer}
       />
+      <audio ref={audioRef} src="/bell2.wav" preload="auto" />
     </>
   );
 }
