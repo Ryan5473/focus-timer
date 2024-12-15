@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Music2, XCircle, Star, LogIn, LogOut } from "lucide-react";
@@ -27,61 +27,99 @@ interface Playlist {
 
 const defaultPlaylists: Playlist[] = [
   {
-    id: "37i9dQZF1DXcBWIGoYBM5M",
-    name: "Today's Top Hits",
-    description: "The most popular tracks on Spotify right now.",
-    imageUrl:
-      "https://i.scdn.co/image/ab67706f00000002190f3b4e21c6f7b6b995e435",
-  },
-  {
-    id: "37i9dQZEVXbMDoHDwVN2tF",
-    name: "Global Top 50",
-    description: "The most played tracks worldwide.",
-    imageUrl:
-      "https://charts-images.scdn.co/assets/locale_en/regional/daily/region_global_large.jpg",
-  },
-  {
-    id: "37i9dQZF1DX0XUsuxWHRQd",
-    name: "RapCaviar",
-    description: "New music from Lil Baby, Polo G and Lil Durk.",
-    imageUrl:
-      "https://i.scdn.co/image/ab67706f000000025c33e0d3af9ab2bfcb5a1a89",
-  },
-  {
-    id: "37i9dQZF1DX4JAvHpjipBk",
-    name: "New Music Friday",
-    description: "The best new music of the week.",
-    imageUrl:
-      "https://i.scdn.co/image/ab67706f0000000254473de875fea0fd19d39037",
-  },
-  {
-    id: "37i9dQZF1DWXRqgorJj26U",
-    name: "Rock Classics",
+    id: "679wCT6dVMDBxrYa5NcrXL",
+    name: "Coding Music 💻 Programming Playlist",
     description:
-      "Rock legends & epic songs that continue to inspire generations.",
+      "best coding music - best coding songs  - best coding chill - best coding mix  best coding playlist  - best coding beats - lofi coding - lofi programming music",
     imageUrl:
-      "https://i.scdn.co/image/ab67706f00000002fe6d8d1019d5b302213e3730",
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84dd9263b1bb311de5c0221957",
   },
   {
-    id: "37i9dQZF1DX4o1oenSJRJd",
-    name: "All Out 00s",
-    description: "The biggest songs of the 2000s.",
+    id: "6X185BlQApNN7mjiFFhPdi",
+    name: "Work Music 📚 Focus Playlist",
+    description:
+      "best work music for focus best focus songs best work chill music best focus music best work mix  best work playlist  best work beats best work vibes",
     imageUrl:
-      "https://i.scdn.co/image/ab67706f00000002f2c97ea8a8bfbd06c4906eea",
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84c9ef08566fd8cb846cbdc5fa",
   },
   {
-    id: "37i9dQZF1DX1lVhptIYRda",
-    name: "Hot Hits UK",
-    description: "The hottest tracks in the United Kingdom.",
+    id: "6zCID88oNjNv9zx6puDHKj",
+    name: "Lofi Study 2024",
+    description:
+      'Lofi Study 2024 is a playlist composed of the best lofi hip hop music, perfect to accompany those long study or work sessions. <a href="https://bit.ly/lofi-sleep-spotify">Click here if you need lofi to sleep 💤</a>',
     imageUrl:
-      "https://i.scdn.co/image/ab67706f000000025f5afb557c431a5f6163c5c9",
+      "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84e8fcb214bcd7d054018d9fe4",
   },
   {
-    id: "37i9dQZF1DX0kbJZpiYdZl",
-    name: "Hot Hits USA",
-    description: "The hottest tracks in the United States.",
+    id: "1KO1bi4AvXdMetRhkk8j1e",
+    name: "Lofi Work",
+    description:
+      "Lofi [lo-fi] work playlist. Ideal for working from home or at the office, curated to keep you focused! | ig lofilists",
     imageUrl:
-      "https://i.scdn.co/image/ab67706f00000002942b5a04176d40ae8f472ca6",
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da8417585dd5bc3229f4aa449eb7",
+  },
+  {
+    id: "38mWQAGEylOPPcWfDpB6FO",
+    name: "Study Music Hindi (Lofi Songs)",
+    description:
+      "Hindi Lofi Songs, Study Music Hindi, Study Lofi Songs, Focus &amp; Concentration, Chill Vibes, Study Songs Bollywood, Studying Time, Lofi Hindi Songs, Hindi Slowed Songs, Lofi Girl, Late night Study",
+    imageUrl:
+      "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da846d62a067cbfe3d637c78dd95",
+  },
+  {
+    id: "07UHFyiPyJBz3AN4tqbnba",
+    name: "Study Music",
+    description:
+      "Improve memory, focus and concentration with study music and 40 hz binaural beats. Ideal background for studying and reading.",
+    imageUrl:
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84e33472390dd191569a0ab43e",
+  },
+  {
+    id: "605WnshSvUcVRN3qt85z0b",
+    name: "BACKGROUND MUSIC 📚 STUDY / WORK",
+    description:
+      "Playlist with chill instrumental lofi beats. Perfect to increase focus &#x2F; concentration or just relax. Covers of popular songs and the best new tracks. ",
+    imageUrl:
+      "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da8455f30aad35daaed867ff8aaf",
+  },
+  {
+    id: "6irxS2m3XrDjWPZFkE5qgo",
+    name: "Inner peace ☮️",
+    description: "Collection Of Soulful Divine Songs.",
+    imageUrl:
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84f2fe70dd0616c0bf1316a4c3",
+  },
+  {
+    id: "2F6LyTRo99Hy7ayFFLso9t",
+    name: "40 Hz Binaural Beats 🎧 Focus, Memory & Concentration ",
+    description:
+      "Super focus ~ Flow state music ~ Ambient soundscapes for study / work / reading",
+    imageUrl:
+      "https://image-cdn-fa.spotifycdn.com/image/ab67706c0000da84215a68be723e671e71b4764b",
+  },
+  {
+    id: "0oPyDVNdgcPFAWmOYSK7O1",
+    name: "Deep focus study playlist 💻",
+    description:
+      "Completely listen to this study playlist for 3 hours for guaranteed deep focus work | ADHD focusing music | Pomodoro Technique Timer",
+    imageUrl:
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84ee44a2a4b20099eadaa0e57e",
+  },
+  {
+    id: "2FLl9UQO1JBqWLDSSzIEhR",
+    name: "hindi deep focus songs",
+    description:
+      "study with me!Listen to hindi favs of a malayali girl &lt;3 keep on studying ,you are doin gr8!! love y&#x27;all",
+    imageUrl:
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da848ddb514f130336a5f15453ed",
+  },
+  {
+    id: "3ayOnMTetG8E1c3q9VJmbi",
+    name: "Study Music 📚 Piano Covers",
+    description:
+      "Boost focus and productivity with these soft piano covers 🧠 Study Music | Soft Piano Covers | Homework Piano Music | Piano For Studying | Piano Focus | Study Sessions | Background Study | Piano Focus | Instrumental Piano Covers | Instrumental Pop Songs",
+    imageUrl:
+      "https://image-cdn-ak.spotifycdn.com/image/ab67706c0000da84e11446bb2205c16ae685c671",
   },
 ];
 
@@ -117,6 +155,7 @@ export function SpotifyWidget() {
   const [currentPlaylist, setCurrentPlaylist] = useState<Playlist | null>(null);
   const [accessToken, setAccessToken] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     const token = getAccessToken();
@@ -175,6 +214,10 @@ export function SpotifyWidget() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    // clear the input field
+    if (inputRef.current) {
+      inputRef.current.value = "";
+    }
     if (playlistUrl) {
       const playlistId = playlistUrl.split("/playlist/")[1]?.split("?")[0];
       if (playlistId) {
@@ -330,9 +373,10 @@ export function SpotifyWidget() {
             <Input
               type="text"
               placeholder="Or paste your Spotify playlist URL"
-              value={playlistUrl}
+              // value={playlistUrl}
               onChange={(e) => setPlaylistUrl(e.target.value)}
               className="flex-grow bg-gray-700/50 border-gray-600 text-gray-100 placeholder-gray-400"
+              ref={inputRef}
             />
             <Button
               type="submit"

@@ -46,7 +46,7 @@ export function PlaylistCard({
             <TooltipTrigger asChild>
               <Button
                 size="icon"
-                className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg"
+                className="absolute bottom-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 shadow-lg size-6 text-sm"
               >
                 <Play className="h-4 w-4" />
               </Button>
@@ -68,7 +68,7 @@ export function PlaylistCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-red-400"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-red-400 size-6 text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onRemove) onRemove();
@@ -87,7 +87,7 @@ export function PlaylistCard({
               <Button
                 variant="ghost"
                 size="icon"
-                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-green-400"
+                className="absolute top-2 right-2 opacity-0 group-hover:opacity-100 transition-all duration-300 bg-gray-800/50 hover:bg-gray-700/50 text-gray-400 hover:text-green-400 size-8 text-sm"
                 onClick={(e) => {
                   e.stopPropagation();
                   if (onSave) onSave();

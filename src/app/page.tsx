@@ -13,7 +13,7 @@ export default function Home() {
           <h1 className="text-3xl font-medium text-gray-100 text-center">
             Pomodoro Task Manager
           </h1>
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <PomodoroTimer />
             <SpotifyWidget />
             <div className="lg:col-span-2">
