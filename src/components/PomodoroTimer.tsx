@@ -236,7 +236,7 @@ export default function PomodoroTimer() {
   return (
     <>
       <div
-        className={`${containerClasses} bg-gray-800 relative bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-gray-700`}
+        className={`${containerClasses} bg-gray-800 relative max-h-[32rem] bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-gray-700`}
         ref={timerRef}
       >
         <div className="relative flex flex-col items-center">

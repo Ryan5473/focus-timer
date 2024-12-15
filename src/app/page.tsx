@@ -3,6 +3,7 @@
 import PomodoroTimer from "@/components/PomodoroTimer";
 import KanbanBoard from "@/components/KanbanBoard";
 import { TimerProvider } from "@/contexts/TimerContext";
+import { SpotifyWidget } from "@/components/SpotifyWidget";
 
 export default function Home() {
   return (
@@ -12,8 +13,13 @@ export default function Home() {
           <h1 className="text-3xl font-medium text-gray-100 text-center">
             Pomodoro Task Manager
           </h1>
-          <PomodoroTimer />
-          <KanbanBoard />
+          <div className="grid grid-cols-2 gap-4">
+            <PomodoroTimer />
+            <SpotifyWidget />
+            <div className="col-span-2">
+              <KanbanBoard />
+            </div>
+          </div>
         </div>
       </div>
     </TimerProvider>
