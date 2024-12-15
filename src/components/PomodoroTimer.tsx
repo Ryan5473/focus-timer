@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useCallback, useRef } from "react";
+import { useState, useEffect, useCallback, useRef, memo } from "react";
 import {
   Eye,
   Settings2,
@@ -18,6 +18,97 @@ import { motion, AnimatePresence } from "framer-motion";
 import { PomodoroMiniWidget } from "./PomodoroMiniWidget";
 
 type TimerMode = "focus" | "shortBreak" | "longBreak";
+
+const ProgressCircle = memo(({ progress }: { progress: number }) => (
+  <svg className="absolute transform -rotate-90 w-full h-full">
+    <circle
+      cx="150"
+      cy="150"
+      r="145"
+      fill="none"
+      stroke="rgba(75, 85, 99, 0.3)"
+      strokeWidth="10"
+    />
+    <circle
+      cx="150"
+      cy="150"
+      r="145"
+      fill="none"
+      stroke="rgba(209, 213, 219, 0.8)"
+      strokeWidth="10"
+      strokeDasharray={2 * Math.PI * 145}
+      strokeDashoffset={2 * Math.PI * 145 * (1 - progress)}
+      strokeLinecap="round"
+      style={{
+        transition: "stroke-dashoffset 0.5s ease",
+        willChange: "stroke-dashoffset",
+      }}
+    />
+  </svg>
+));
+
+ProgressCircle.displayName = "ProgressCircle";
+
+const formatTime = (timeInSeconds: number) => {
+  const minutes = Math.floor(timeInSeconds / 60);
+  const seconds = timeInSeconds % 60;
+  return `${minutes.toString().padStart(2, "0")}:${seconds
+    .toString()
+    .padStart(2, "0")}`;
+};
+
+const TimerDisplay = memo(
+  ({
+    time,
+    mode,
+    cycleCount,
+  }: {
+    time: number;
+    mode: TimerMode;
+    cycleCount: number;
+  }) => (
+    <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-100">
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={mode}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.3 }}
+          className="flex flex-col items-center"
+        >
+          {mode === "focus" ? (
+            <Eye className="w-5 h-5 mb-2 opacity-60" />
+          ) : (
+            <Coffee className="w-5 h-5 mb-2 opacity-60" />
+          )}
+          <div className="text-6xl font-light tracking-wider mb-1">
+            {formatTime(time)}
+          </div>
+          <div className="text-sm tracking-[0.2em] opacity-60 mb-2">
+            {mode === "focus"
+              ? "FOCUS"
+              : mode === "shortBreak"
+              ? "SHORT BREAK"
+              : "LONG BREAK"}
+          </div>
+        </motion.div>
+      </AnimatePresence>
+      <div className="flex gap-1">
+        {[...Array(4)].map((_, i) => (
+          <div
+            key={i}
+            className={`w-1 h-1 rounded-full ${
+              i < cycleCount ? "bg-gray-200" : "bg-gray-400/60"
+            }`}
+          />
+        ))}
+      </div>
+    </div>
+  )
+);
+
+TimerDisplay.displayName = "TimerDisplay";
 
 export default function PomodoroTimer() {
   const { settings } = useTimerContext();
@@ -120,14 +211,6 @@ export default function PomodoroTimer() {
     setTime(settings[`${mode}Time`] * 60);
   };
 
-  const formatTime = (timeInSeconds: number) => {
-    const minutes = Math.floor(timeInSeconds / 60);
-    const seconds = timeInSeconds % 60;
-    return `${minutes.toString().padStart(2, "0")}:${seconds
-      .toString()
-      .padStart(2, "0")}`;
-  };
-
   const handleSpeedChange = (speed: number) => {
     setTimerSpeed(speed);
   };
@@ -147,16 +230,21 @@ export default function PomodoroTimer() {
     timerRef.current?.scrollIntoView({ behavior: "smooth" });
   };
 
+  const containerClasses = "transform-gpu will-change-transform";
+  const progressCircleClasses = "transform-gpu will-change-transform";
+
   return (
     <>
       <div
-        className="bg-gray-800 relative bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-gray-700"
+        className={`${containerClasses} bg-gray-800 relative bg-opacity-30 backdrop-filter backdrop-blur-lg rounded-2xl p-8 shadow-xl border border-gray-700`}
         ref={timerRef}
       >
         <div className="relative flex flex-col items-center">
           <div className="relative w-[300px] h-[300px]">
             {/* Progress circle */}
-            <div className="relative w-[300px] h-[300px]">
+            <div
+              className={`${progressCircleClasses} relative w-[300px] h-[300px]`}
+            >
               <svg className="absolute transform -rotate-90 w-full h-full">
                 <circle
                   cx="150"
@@ -182,44 +270,7 @@ export default function PomodoroTimer() {
             </div>
 
             {/* Timer content */}
-            <div className="absolute inset-0 flex flex-col items-center justify-center text-gray-100">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={mode}
-                  initial={{ opacity: 0, y: 20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -20 }}
-                  transition={{ duration: 0.3 }}
-                  className="flex flex-col items-center"
-                >
-                  {mode === "focus" ? (
-                    <Eye className="w-5 h-5 mb-2 opacity-60" />
-                  ) : (
-                    <Coffee className="w-5 h-5 mb-2 opacity-60" />
-                  )}
-                  <div className="text-6xl font-light tracking-wider mb-1">
-                    {formatTime(time)}
-                  </div>
-                  <div className="text-sm tracking-[0.2em] opacity-60 mb-2">
-                    {mode === "focus"
-                      ? "FOCUS"
-                      : mode === "shortBreak"
-                      ? "SHORT BREAK"
-                      : "LONG BREAK"}
-                  </div>
-                </motion.div>
-              </AnimatePresence>
-              <div className="flex gap-1">
-                {[...Array(4)].map((_, i) => (
-                  <div
-                    key={i}
-                    className={`w-1 h-1 rounded-full ${
-                      i < cycleCount ? "bg-gray-200" : "bg-gray-400/60"
-                    }`}
-                  />
-                ))}
-              </div>
-            </div>
+            <TimerDisplay time={time} mode={mode} cycleCount={cycleCount} />
           </div>
 
           {/* Controls */}
