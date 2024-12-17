@@ -16,6 +16,12 @@ import { DevTools } from "./DevTools";
 import { useTimerContext } from "@/contexts/TimerContext";
 import { motion, AnimatePresence } from "framer-motion";
 import { PomodoroMiniWidget } from "./PomodoroMiniWidget";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "./ui/tooltip";
 
 type TimerMode = "focus" | "shortBreak" | "longBreak";
 
@@ -96,12 +102,20 @@ const TimerDisplay = memo(
       </AnimatePresence>
       <div className="flex gap-1">
         {[...Array(4)].map((_, i) => (
-          <div
-            key={i}
-            className={`w-1 h-1 rounded-full ${
-              i < cycleCount ? "bg-gray-200" : "bg-gray-400/60"
-            }`}
-          />
+          <TooltipProvider key={i}>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <div
+                  className={`w-1 h-1 rounded-full ${
+                    i < cycleCount ? "bg-gray-200" : "bg-gray-400/60"
+                  }`}
+                />
+              </TooltipTrigger>
+              <TooltipContent side="bottom" className="text-xs">
+                {`${cycleCount} cycles completed`}
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
         ))}
       </div>
     </div>
