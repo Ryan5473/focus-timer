@@ -164,21 +164,29 @@ export default function PomodoroTimer() {
       });
     }
 
+    setIsActive(false);
+
     if (mode === "focus") {
       const newCycleCount = (cycleCount + 1) % settings.cyclesBeforeLongBreak;
       const shouldTakeLongBreak = newCycleCount === 0;
 
       const breakMode = shouldTakeLongBreak ? "longBreak" : "shortBreak";
+      const newDuration = settings[`${breakMode}Time`] * 60;
+
       setMode(breakMode);
-      setTime(settings[`${breakMode}Time`] * 60);
+      setTime(newDuration);
       setCycleCount(newCycleCount);
+
+      if (autoStart) {
+        setIsActive(true);
+      }
     } else {
       setMode("focus");
       setTime(settings.focusTime * 60);
-    }
 
-    if (autoStart) {
-      setIsActive(true);
+      if (autoStart) {
+        setIsActive(true);
+      }
     }
   }, [mode, settings, autoStart, cycleCount]);
 
@@ -197,7 +205,29 @@ export default function PomodoroTimer() {
         setTime((prevTime) => {
           const newTime = Math.max(prevTime - timerSpeed, 0);
           if (newTime === 0) {
-            nextMode();
+            setIsActive(false);
+            setTimeout(() => {
+              if (mode === "focus") {
+                const newCycleCount =
+                  (cycleCount + 1) % settings.cyclesBeforeLongBreak;
+                const shouldTakeLongBreak = newCycleCount === 0;
+                const breakMode = shouldTakeLongBreak
+                  ? "longBreak"
+                  : "shortBreak";
+                setMode(breakMode);
+                setTime(settings[`${breakMode}Time`] * 60);
+                setCycleCount(newCycleCount);
+                if (autoStart) {
+                  setIsActive(true);
+                }
+              } else {
+                setMode("focus");
+                setTime(settings.focusTime * 60);
+                if (autoStart) {
+                  setIsActive(true);
+                }
+              }
+            }, 0);
           }
           return newTime;
         });
@@ -207,7 +237,7 @@ export default function PomodoroTimer() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, time, timerSpeed, nextMode]);
+  }, [isActive, time, timerSpeed, mode, settings, cycleCount, autoStart]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
