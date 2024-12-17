@@ -8,6 +8,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { useTimerContext } from "@/contexts/TimerContext";
 import { useState, useEffect } from "react";
 import { VisuallyHidden } from "@/components/visually-hidden";
+import { Switch } from "./ui/switch";
 
 interface SettingsModalProps {
   open: boolean;
@@ -127,6 +128,29 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               }
               className="bg-gray-700/50 border-gray-600 text-gray-100"
             />
+          </div>
+          <div className="border-t pt-4">
+            <h4 className="text-sm font-medium mb-4">Beta Features</h4>
+            <div className="flex items-center justify-between">
+              <div className="space-y-0.5">
+                <label className="text-sm font-medium">Metrics</label>
+                <p className="text-sm text-muted-foreground">
+                  Track your productivity metrics
+                </p>
+              </div>
+              <Switch
+                checked={localSettings.betaFeatures.metrics}
+                onCheckedChange={(checked) =>
+                  setLocalSettings({
+                    ...localSettings,
+                    betaFeatures: {
+                      ...localSettings.betaFeatures,
+                      metrics: checked,
+                    },
+                  })
+                }
+              />
+            </div>
           </div>
           <Button
             onClick={handleSave}

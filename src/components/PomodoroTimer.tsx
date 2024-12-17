@@ -125,7 +125,7 @@ const TimerDisplay = memo(
 TimerDisplay.displayName = "TimerDisplay";
 
 export default function PomodoroTimer() {
-  const { settings } = useTimerContext();
+  const { settings, updateMetrics, metrics } = useTimerContext();
   const [time, setTime] = useState(settings.focusTime * 60);
   const [isActive, setIsActive] = useState(false);
   const [showSettings, setShowSettings] = useState(false);
@@ -136,6 +136,7 @@ export default function PomodoroTimer() {
   const [autoStart, setAutoStart] = useState(true);
   const [showMiniWidget, setShowMiniWidget] = useState(false);
   const [isMuted, setIsMuted] = useState(false);
+  // const lastTimeRef = useRef(time);
 
   const timerRef = useRef<HTMLDivElement>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -169,7 +170,6 @@ export default function PomodoroTimer() {
     if (mode === "focus") {
       const newCycleCount = (cycleCount + 1) % settings.cyclesBeforeLongBreak;
       const shouldTakeLongBreak = newCycleCount === 0;
-
       const breakMode = shouldTakeLongBreak ? "longBreak" : "shortBreak";
       const newDuration = settings[`${breakMode}Time`] * 60;
 
@@ -190,13 +190,6 @@ export default function PomodoroTimer() {
     }
   }, [mode, settings, autoStart, cycleCount]);
 
-  // Removed useEffect as per update request
-  // useEffect(() => {
-  //   if (!isActive) {
-  //     setTime(settings[`${mode}Time`] * 60);
-  //   }
-  // }, [settings, mode, isActive]);
-
   useEffect(() => {
     let interval: NodeJS.Timeout | null = null;
 
@@ -214,15 +207,34 @@ export default function PomodoroTimer() {
                 const breakMode = shouldTakeLongBreak
                   ? "longBreak"
                   : "shortBreak";
+
+                updateMetrics("focusSessions", 0.5);
+                updateMetrics("totalFocusTime", 25 / 2);
+
+                // Update streaks
+                updateMetrics("dailyStreak", metrics.dailyStreak + 1);
+                if (metrics.dailyStreak + 1 > metrics.bestFocusStreak) {
+                  updateMetrics("bestFocusStreak", metrics.dailyStreak + 1);
+                }
+
+                if (shouldTakeLongBreak) {
+                  updateMetrics("longBreaks", 0.5);
+                }
+
                 setMode(breakMode);
                 setTime(settings[`${breakMode}Time`] * 60);
                 setCycleCount(newCycleCount);
+
                 if (autoStart) {
                   setIsActive(true);
                 }
               } else {
+                if (mode === "shortBreak") {
+                  updateMetrics("shortBreaks", 0.5);
+                }
                 setMode("focus");
                 setTime(settings.focusTime * 60);
+
                 if (autoStart) {
                   setIsActive(true);
                 }
@@ -237,7 +249,17 @@ export default function PomodoroTimer() {
     return () => {
       if (interval) clearInterval(interval);
     };
-  }, [isActive, time, timerSpeed, mode, settings, cycleCount, autoStart]);
+  }, [
+    isActive,
+    time,
+    timerSpeed,
+    mode,
+    settings,
+    cycleCount,
+    autoStart,
+    updateMetrics,
+    metrics,
+  ]);
 
   useEffect(() => {
     const observer = new IntersectionObserver(
@@ -258,6 +280,20 @@ export default function PomodoroTimer() {
       }
     };
   }, []);
+
+  // useEffect(() => {
+  //   if (!isActive) {
+  //     const timeSpent = lastTimeRef.current - time;
+  //     if (timeSpent > 0) {
+  //       if (mode === "focus") {
+  //         updateMetrics("totalFocusTime", Math.floor(timeSpent / 60));
+  //       } else {
+  //         updateMetrics("totalBreakTime", Math.floor(timeSpent / 60));
+  //       }
+  //     }
+  //   }
+  //   lastTimeRef.current = time;
+  // }, [isActive, time, mode, updateMetrics]);
 
   const toggleTimer = () => setIsActive(!isActive);
   const resetTimer = () => {
