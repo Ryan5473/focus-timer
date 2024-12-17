@@ -143,32 +143,30 @@ export default function PomodoroTimer() {
   );
 
   const nextMode = useCallback(() => {
-    // Play sound when timer completes
     if (audioRef.current) {
-      audioRef.current.currentTime = 0; // Reset audio to start
+      audioRef.current.currentTime = 0;
       audioRef.current.play().catch((error) => {
         console.warn("Audio playback failed:", error);
       });
     }
 
     if (mode === "focus") {
-      const breakMode =
-        settings.breakType === "short" ? "shortBreak" : "longBreak";
+      const newCycleCount = (cycleCount + 1) % settings.cyclesBeforeLongBreak;
+      const shouldTakeLongBreak = newCycleCount === 0;
+
+      const breakMode = shouldTakeLongBreak ? "longBreak" : "shortBreak";
       setMode(breakMode);
-      setTime(settings[`${breakMode}Time`] * 60); // Set initial time for new mode
-      if (breakMode === "longBreak") {
-        setCycleCount(0);
-      } else {
-        setCycleCount((prev) => (prev + 1) % 4);
-      }
+      setTime(settings[`${breakMode}Time`] * 60);
+      setCycleCount(newCycleCount);
     } else {
       setMode("focus");
-      setTime(settings.focusTime * 60); // Set initial time for new mode
+      setTime(settings.focusTime * 60);
     }
+
     if (autoStart) {
       setIsActive(true);
     }
-  }, [mode, settings, autoStart]);
+  }, [mode, settings, autoStart, cycleCount]);
 
   // Removed useEffect as per update request
   // useEffect(() => {

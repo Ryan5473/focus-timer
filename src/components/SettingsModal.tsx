@@ -106,6 +106,28 @@ export function SettingsModal({ open, onOpenChange }: SettingsModalProps) {
               </div>
             </RadioGroup>
           </div>
+          <div className="space-y-2">
+            <Label htmlFor="cyclesBeforeLongBreak">
+              Number of Focus Sessions Before Long Break
+            </Label>
+            <Input
+              id="cyclesBeforeLongBreak"
+              type="number"
+              min="1"
+              max="10"
+              value={localSettings.cyclesBeforeLongBreak}
+              onChange={(e) =>
+                setLocalSettings({
+                  ...localSettings,
+                  cyclesBeforeLongBreak: Math.max(
+                    1,
+                    Math.min(10, Number(e.target.value))
+                  ),
+                })
+              }
+              className="bg-gray-700/50 border-gray-600 text-gray-100"
+            />
+          </div>
           <Button
             onClick={handleSave}
             className="w-full bg-gray-700 hover:bg-gray-600 text-gray-100"
