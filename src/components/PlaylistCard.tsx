@@ -37,8 +37,7 @@ export function PlaylistCard({
           <Image
             src={imageUrl}
             alt={name}
-            layout="fill"
-            objectFit="cover"
+            fill
             className="transition-all duration-300 group-hover:scale-105"
           />
           <div className="absolute inset-0 bg-black bg-opacity-0 group-hover:bg-opacity-40 transition-all duration-300" />
