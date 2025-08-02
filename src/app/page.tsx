@@ -15,7 +15,7 @@ function AppContent() {
       <main className="flex-grow p-8">
         <div className="max-w-5xl mx-auto space-y-6">
           <h1 className="text-3xl font-medium text-gray-100 text-center">
-            Pomodoro Task Manager
+            Focus timer
           </h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <PomodoroTimer />

@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Pomodoro Task Manager",
+  title: "Focus timer",
   description: "A simple Pomodoro task manager",
   openGraph: {
     title: "Pomodoro Task Manager",
